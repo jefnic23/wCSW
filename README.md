@@ -47,3 +47,8 @@ python wcsw.py
 Files are saved to the `data` directory.
 
 Since the script relies on Statcast data, only MLB seasons after 2015 are valid. The script will ask which year you'd like to generate a leaderboard for, so if you want all Statcast seasons you'll have to run the script for each season.
+
+#### Related
+
+- [hEV](https://github.com/jefnic23/hEV)
+- [SBot](https://github.com/jefnic23/SBot)
