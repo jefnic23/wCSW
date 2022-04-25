@@ -6,7 +6,7 @@ Python script that builds yearly wCSW leaderboards.
 
 - Python 3.X
 - Yearly Statcast data (which you can get using [this script](https://github.com/jefnic23/baseball_savant_scraper))
-  - If you already have Statcast data you will need to make sure it's saved with the format `../baseball_savant/data/savant_{year}`, otherwise you'll have to edit the code at line 45 of `sbot.py`
+  - If you already have Statcast data you will need to make sure it's saved with the format `../baseball_savant/data/savant_{year}`, otherwise you'll have to edit the code at line 62 of `wcsw.py`
 
 ## Installation
 
