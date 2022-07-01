@@ -64,7 +64,15 @@ if __name__ == '__main__':
         pbar.update(1)
 
         # data cleanup
-        df['csw'] = np.where(df['description'].isin(['swinging_strike', 'swinging_strike_blocked', 'called_strike', 'foul_tip']), 1, 0)
+        df['csw'] = np.where(df['description'].isin([
+            'swinging_strike', 
+            'swinging_strike_blocked', 
+            'called_strike', 
+            'foul_tip', 
+            'missed_bunt', 
+            'bunt_foul_tip', 
+            'swinging_pitchout'
+        ]), 1, 0)
         df['count'] = df['balls'].astype(str) + '-' + df['strikes'].astype(str)
         df = df.loc[df['count'] != '4-2']     # for some reason there's a 4-2 count
         pbar.update(1)
