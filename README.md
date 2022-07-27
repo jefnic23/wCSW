@@ -1,6 +1,6 @@
 # wES: Weighted Earned Strikes
 
-Python script that builds yearly wES leaderboards.
+Python script that builds yearly wES leaderboards. [Read the original article breaking down the new stat here.](https://www.pitcherlist.com/wes-rate-creating-an-improved-csw-rate/)
 
 ## Requirements
 
