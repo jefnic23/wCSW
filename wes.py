@@ -51,7 +51,6 @@ def main():
     # get savant data from postgres and read into pandas dataframe
     engine = createEngine()
     df = pd.read_sql('baseball_savant', engine, columns=columns)
-    df['game_year'] = df['game_year'].astype(int)
     pbar.update(1)
 
     # data cleanup
