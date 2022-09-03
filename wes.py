@@ -1,14 +1,15 @@
-from datetime import datetime
+import os
+import warnings
+
+import numpy as np
+import pandas as pd
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from tqdm import tqdm
-import pandas as pd
-import numpy as np
-import warnings
-import os
 
 
 def createEngine():
+    '''creates database connection'''
     load_dotenv()
     USER = os.getenv('USER')
     PSWD = os.getenv('PSWD')
@@ -20,15 +21,14 @@ def createEngine():
 
 def getCountWeights(df):
     '''group ball-strike counts and find csw z-scores for each'''
-
-    csw_mean = df['csw'].mean()
-    csw_std = df['csw'].std()
-    count_weights = df.groupby('count').agg(csw_score=('csw', lambda x: (csw_mean - (sum(x) / len(x))) / csw_std))
+    csw_mean                = df['csw'].mean()
+    csw_std                 = df['csw'].std()
+    count_weights           = df.groupby('count').agg(csw_score=('csw', lambda x: (csw_mean - (sum(x) / len(x))) / csw_std))
     count_weights['weight'] = round(1+count_weights['csw_score'], 2)
     return count_weights
 
 
-def main():
+if __name__ == '__main__':
     warnings.filterwarnings('ignore')
 
     # initialize overall progress bar
@@ -48,9 +48,9 @@ def main():
         'at_bat_number'
     ]
 
-    # get savant data from postgres and read into pandas dataframe
+    # get savant data from postgres
     engine = createEngine()
-    df = pd.read_sql('baseball_savant', engine, columns=columns)
+    df     = pd.read_sql('baseball_savant', engine, columns=columns)
     pbar.update(1)
 
     # data cleanup
@@ -64,7 +64,7 @@ def main():
         'swinging_pitchout'
     ]), 1, 0)
     df['count'] = df['balls'].astype(str) + '-' + df['strikes'].astype(str)
-    df = df.loc[df['count'] != '4-2']     # for some reason there's a 4-2 count
+    df          = df.loc[df['count'] != '4-2']     # for some reason there's a 4-2 count
     pbar.update(1)
 
     # map count to weighted value
@@ -81,18 +81,14 @@ def main():
             weights = getCountWeights(df_year)
 
             # group pitchers by count and get total wES
-            df_year = df_year.groupby(['player_name', 'count']).agg(total_pitches=('at_bat_number', 'count'), total_csw=('csw', 'sum')).reset_index()
+            df_year        = df_year.groupby(['player_name', 'count']).agg(total_pitches=('at_bat_number', 'count'), total_csw=('csw', 'sum')).reset_index()
             df_year['wES'] = df_year['count'].map(weightCount) * df_year['total_csw']
             
             # group pitchers again to get wES rate
-            df_year = df_year.groupby(['player_name']).agg({'total_pitches': 'sum', 'wES': 'sum'})
+            df_year        = df_year.groupby(['player_name']).agg({'total_pitches': 'sum', 'wES': 'sum'})
             df_year['wES'] = df_year['wES'] / df_year['total_pitches']
 
             df_year.to_excel(writer, sheet_name=str(year))
+
     pbar.update(1)
-
-    return print("Leaderboards saved to data directory.")
-
-
-if __name__ == '__main__':
-    main()
+    
